@@ -8,3 +8,4 @@ const options = program.opts();
 
 const server = new Server(options);
 console.log(server.config)
+server.start();

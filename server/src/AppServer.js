@@ -2,11 +2,24 @@ import yml from "yamljs";
 import fs from "fs";
 import express from "express";
 import expressWs from "express-ws";
-import {DEFAULT_CONFIG_PATH} from "./constant/ConstVar.js";
+import {APP_CONTENT, DEFAULT_CONFIG_PATH} from "./constant/ConstVar.js";
 import AppConfig from "./model/AppConfig.js";
+import requestMapping from "./controller/requestMapping.js"
+import VmManager from "./support/vm/VmManager.js";
+
+const SUFFIX = "Controller";
+
+function controllerNameToRootPath(controllerName) {
+    if (controllerName.endsWith(SUFFIX)) {
+        return controllerName.substring(0, controllerName.length - SUFFIX.length);
+    }
+    return controllerName;
+}
 
 class AppServer {
     config;
+    app;
+    server;
     constructor(option) {
         let configPath = DEFAULT_CONFIG_PATH;
         let config = new AppConfig();
@@ -30,11 +43,35 @@ class AppServer {
         }
         config.init();
         this.config = config;
+
+        APP_CONTENT.config = config;
+        APP_CONTENT.vmManager = new VmManager(config);
     }
 
     start() {
-        let app = express();
+        const app = express();
         expressWs(app);
+        app.use(express.json())
+        this.app = app;
+        this.setRequestMapping();
+        const server = app.listen(this.config.port, this.config.host, function () {
+            console.log("服务已启动，地址为http://%s:%s", server.address().address, server.address().port)
+        });
+        this.server = server;
+    }
+
+    setRequestMapping() {
+        for (let controllerName in requestMapping) {
+            const controller = requestMapping[controllerName];
+            let rootPath = controllerNameToRootPath(controllerName);
+            for (let name in controller) {
+                const func = controller[name];
+                if (!(typeof func === "function")) {
+                    continue;
+                }
+                this.app.post(`/${rootPath}/${name}`, func);
+            }
+        }
     }
 }
 
