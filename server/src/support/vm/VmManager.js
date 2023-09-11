@@ -1,5 +1,6 @@
 import ivm from 'isolated-vm';
 import AppConfig from "../../model/AppConfig.js";
+import {APP_CONTENT, DEFAULT_MODULE} from "../../constant/ConstVar.js";
 
 function createVm(config) {
     return new ivm.Isolate({
@@ -26,7 +27,14 @@ class VmManager {
         }
 
         this.config = config;
-        this.defaultVm = createVm(config);
+        const defaultVm = createVm(config);
+        this.defaultVm = {
+            vm: defaultVm
+        };
+        for (let key in DEFAULT_MODULE) {
+            this.defaultVm[key] = defaultVm.compileModuleSync(`import ${key} from '${DEFAULT_MODULE[key]}';`);
+        }
+
         const funcs = [];
         if (config.recoveryFreeMaxTime > 0) {
             funcs.push(() => {
@@ -74,6 +82,26 @@ class VmManager {
 
     getDefaultVm() {
         return this.defaultVm;
+    }
+
+    reference(obj) {
+        return new ivm.Reference(obj);
+    }
+
+    evalWithDefaultVm(param, init, success, failed, envFailed) {
+        let {
+            timeout = APP_CONTENT.config.evalTimeout,
+            script
+        } = param;
+        const defaultVm = APP_CONTENT.vmManager.getDefaultVm();
+        defaultVm.vm
+            .createContext()
+            .then(context => {
+                init(context, defaultVm);
+                timeout = Math.min(timeout, APP_CONTENT.config.evalTimeout) * 1000;
+                context.eval(script, {timeout})
+                    .then(success).catch(failed).finally(() => context.release())
+            }).catch(envFailed);
     }
 
     getVm(token, callback) {
