@@ -4,18 +4,19 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "canvas": "^2.11.2",
     "commander": "^11.0.0",
+    "crypto": "^1.0.1",
     "echarts": "^5.4.3",
     "express": "^4.18.2",
     "express-ws": "^5.0.2",
     "isolated-vm": "^4.6.0",
+    "sharp": "^0.32.5",
     "yamljs": "^0.3.0"
   }
 }
