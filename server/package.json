@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "canvas": "^2.11.2",
     "commander": "^11.0.0",
     "crypto": "^1.0.1",
     "echarts": "^5.4.3",
