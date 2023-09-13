@@ -2,8 +2,9 @@ const ivm = require('isolated-vm');
 const fs = require('fs');
 const AppConfig = require('../../model/AppConfig.js');
 const VmInstance = require('../../model/VmInstance');
-const baseSupport = require('./init/BaseSupport');
+const vmSupport = require('./init/SupportAll');
 const path = require("path");
+const {APP_CONTENT} = require("../../constant/ConstVar");
 
 const CURRENT_PATH_PREFIX = './';
 const BASE_PATH_PREFIX = '../';
@@ -21,24 +22,34 @@ function createVm(config) {
 }
 
 function instantiateModule(vmInstance, module, context) {
+    const needRelease = [];
     module.forEach(moduleName => {
-        const module = vmInstance.module[moduleName];
-        if (module) {
+        const moduleImport = APP_CONTENT.config.module[moduleName];
+        if (moduleImport) {
+            const module = vmInstance.vm.compileModuleSync(moduleImport);
             const rootPath = path.basename(module.dependencySpecifiers[0]);
             module.instantiateSync(context, m => {
-                if (!path.extname(m)) {
-                    m += DEFAULT_MODULE_SUFFIX;
-                }
-                if (!m.startsWith(rootPath) && (m.startsWith(CURRENT_PATH_PREFIX) || m.startsWith(BASE_PATH_PREFIX))) {
+                const relative = m.startsWith(CURRENT_PATH_PREFIX) || m.startsWith(BASE_PATH_PREFIX);
+                // if (relative && !path.extname(m)) {
+                //     m += DEFAULT_MODULE_SUFFIX;
+                // }
+                if (!m.startsWith(rootPath) && relative) {
                     m = path.join(rootPath, m);
                 }
-                return vmInstance.vm.compileModuleSync(fs.readFileSync(require.resolve(m)).toString());
+                const depend = vmInstance.vm.compileModuleSync(fs.readFileSync(require.resolve(m)).toString())
+                needRelease.push(depend);
+                return depend;
             });
+            needRelease.push(module);
             module.evaluateSync();
         } else {
             console.warn(`load module failed ${moduleName}`);
         }
-    })
+    });
+    context.release = function () {
+        needRelease.forEach(module => module.release());
+        context.release();
+    }
 }
 
 class VmManager {
@@ -58,13 +69,15 @@ class VmManager {
         this.config = config;
         const defaultVm = createVm(config);
         const script = [];
-        config.script.forEach(s => {
-            defaultVm.compileScriptSync(fs.readFileSync(s).toString());
-        })
+        // todo have some question
+        // config.script.forEach(s => {
+        //     defaultVm.compileScriptSync(fs.readFileSync(s).toString());
+        // })
         const module = {};
-        for (let key in config.module) {
-            module[key] = defaultVm.compileModuleSync(config.module[key]);
-        }
+        // todo have some question
+        // for (let key in config.module) {
+        //     module[key] = defaultVm.compileModuleSync(config.module[key]);
+        // }
         this.defaultVm = new VmInstance({
             vm: defaultVm,
             module,
@@ -132,9 +145,11 @@ class VmManager {
         this.defaultVm.vm
             .createContext()
             .then(context => {
-                baseSupport.handleBase(this.defaultVm, context);
+                vmSupport.handle(this.defaultVm, context);
                 instantiateModule(this.defaultVm, module, context);
-                init(context, this.defaultVm);
+                if (init) {
+                    init(context, this.defaultVm);
+                }
                 timeout = Math.min(timeout, this.config.evalTimeout) * 1000;
                 context.eval(script, {timeout})
                     .then(success).catch(failed).finally(() => context.release())

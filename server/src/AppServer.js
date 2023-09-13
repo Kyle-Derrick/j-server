@@ -34,7 +34,7 @@ class AppServer {
                     console.warn(`config yaml file not exists: ${configPath}`);
                 } else {
                     ymlConfig = yml.load(configPath);
-                    Object.assign(ymlConfig, config);
+                    Object.assign(config, ymlConfig);
                 }
             })
         } catch (e) {

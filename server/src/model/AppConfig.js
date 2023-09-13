@@ -44,7 +44,7 @@ class AppConfig {
         if (!config || !Object.keys(config)) {
             return;
         }
-        Object.assign(config, this);
+        Object.assign(this, config);
     }
 
 

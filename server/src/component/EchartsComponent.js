@@ -9,15 +9,19 @@ const DEFAULT_MAX_WIDTH = 3840;
 const DEFAULT_MAX_HEIGHT = 2160;
 
 const OPTION_EMPTY_ERROR = 400;
-const ENV_CREATE_ERROR = 500;
 const EVAL_RENDER_ERROR = 400;
+const ENV_CREATE_ERROR = 500;
+const TRANSLATE_IMAGE_ERROR = 500;
 
 function toImage(svgString, success, failed) {
     sharp(Buffer.from(svgString))
         .png()
         .toBuffer()
         .then(success)
-        .catch(failed);
+        .catch(err => {
+            console.error("translate svg image to png error：", err);
+            failed('translate image error', TRANSLATE_IMAGE_ERROR);
+        });
 }
 
 function render({
@@ -26,12 +30,11 @@ function render({
                     option,
                     json = false,
                     timeout = APP_CONTENT.config.evalTimeout
-                }, success, failed, translateImageFailed) {
+                }, success, failed) {
     if (!option || !option.trim()) {
         failed("option cant be empty", OPTION_EMPTY_ERROR);
         return;
     }
-    translateImageFailed = translateImageFailed || failed;
     width = Math.min(width, DEFAULT_MAX_WIDTH);
     height = Math.min(height, DEFAULT_MAX_HEIGHT);
     if (json) {
@@ -44,7 +47,7 @@ function render({
             })
             let optionJson = JSON.parse(option);
             chart.setOption(optionJson);
-            toImage(chart.renderToSVGString(), success, failed, translateImageFailed);
+            toImage(chart.renderToSVGString(), success, failed);
             return;
         } catch (e) {
             console.debug(`try parse json failed：${option}`, e)
@@ -68,7 +71,7 @@ return chart.renderToSVGString();
             },
             module: ['echarts'],
             success: svg => {
-                toImage(svg, success, failed, translateImageFailed);
+                toImage(svg, success, failed);
             },
             failed: err => {
                 console.error("eval script error：", err);

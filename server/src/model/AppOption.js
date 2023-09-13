@@ -2,7 +2,7 @@ class AppOption {
     config
 
     constructor(option) {
-        Object.assign(option, this);
+        Object.assign(this, option);
     }
 }
 

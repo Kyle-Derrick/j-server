@@ -4,7 +4,7 @@ class VmInstance{
     script = [];
 
     constructor(vmInstance) {
-        Object.assign(vmInstance, this);
+        Object.assign(this, vmInstance);
     }
 }
 
