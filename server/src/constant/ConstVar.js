@@ -17,11 +17,13 @@ const DEFAULT_RECOVERY_FREE_MAX_TIME = 60;
 const DEFAULT_FORCED_RECYCLING_TIME = 60 * 3;
 const DEFAULT_EVAL_TIMEOUT = 3 * 60;
 const DEFAULT_CONFIG_PATH = join(dirname(__dirname), "config/application.yml").toString();
-const DEFAULT_LIB_PATH = join(dirname(__dirname), "runtime_lib");
-const APP_CONTENT = new AppContent();
-const DEFAULT_MODULE = {
-    // echarts: "echarts"
+const DEFAULT_INCLUDE_MODULE = {
+    echarts: {
+        'import': '* as '
+    }
 };
+// const DEFAULT_SCRIPT = join(dirname(__dirname), "script");
+const APP_CONTENT = new AppContent();
 
 module.exports = {
     DEFAULT_HOST,
@@ -35,7 +37,7 @@ module.exports = {
     DEFAULT_FORCED_RECYCLING_TIME,
     DEFAULT_EVAL_TIMEOUT,
     DEFAULT_CONFIG_PATH,
-    DEFAULT_LIB_PATH,
+    DEFAULT_INCLUDE_MODULE,
+    // DEFAULT_SCRIPT,
     APP_CONTENT,
-    DEFAULT_MODULE,
 }

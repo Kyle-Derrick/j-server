@@ -35,6 +35,9 @@ function output(res, out, chart) {
         })
 }
 
+let script = {};
+APP_CONTENT.config.script.forEach(s => script = {...script, ...require(s)})
+
 module.exports = {
     render(req, res) {
         const param = req.body;
@@ -71,7 +74,7 @@ module.exports = {
             // todo: vm is not security, but isolated-vm context is not complete, need have a isolated-vm solution
             vm.runInNewContext(`
         const option = ${option};
-        chart.setOption(option);`, {chart})
+        chart.setOption(option);`, {...script, chart})
             output(res, out, chart);
         } catch (e) {
             console.error('render echarts faile', e);
