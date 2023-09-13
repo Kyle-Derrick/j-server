@@ -1,6 +1,6 @@
-import ivm from 'isolated-vm';
-import AppConfig from "../../model/AppConfig.js";
-import {APP_CONTENT, DEFAULT_MODULE} from "../../constant/ConstVar.js";
+const ivm = require('isolated-vm');
+const AppConfig = require('../../model/AppConfig.js');
+const {APP_CONTENT, DEFAULT_MODULE} = require('../../constant/ConstVar.js');
 
 function createVm(config) {
     return new ivm.Isolate({
@@ -165,4 +165,4 @@ config: [vm max:${this.config.vmMax}, wait max: ${this.config.waitMax}];`)
     }
 }
 
-export default VmManager;
+module.exports = VmManager;

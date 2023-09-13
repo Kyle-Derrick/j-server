@@ -1,32 +1,41 @@
-import {APP_CONTENT} from "../constant/ConstVar.js";
-import { createCanvas } from "canvas";
-import echarts from "echarts";
+const vm = require("vm");
+const sharp = require('sharp');
+
+const {APP_CONTENT} = require('../constant/ConstVar.js');
+const echarts = require('echarts');
 
 const DEFAULT_WIDTH = 700;
 const DEFAULT_HEIGHT = 700;
 
 const OUT_BYTE = "byte";
 const OUT_BASE64 = "base64";
-const OUT_URL = "url";
+const OUT_SVG = "svg";
 
 const IMG_CONTENT_TYPE = "image/png";
 
-function output(res, out, canvas) {
-    switch (out) {
-        case OUT_BASE64:
-            res.setHeader('Content-Type', IMG_CONTENT_TYPE);
-            res.send(canvas.toBuffer(IMG_CONTENT_TYPE));
-            break;
-        case OUT_URL:
-            res.send(canvas.toDataURL());
-            break;
-        default:
-            res.send(canvas.toBuffer(IMG_CONTENT_TYPE).toString("Base64"));
-            break;
+function output(res, out, chart) {
+    const svg = chart.renderToSVGString();
+    if (out === OUT_SVG) {
+        res.send(svg);
+        return;
     }
+    sharp(Buffer.from(svg))
+        .png()
+        .toBuffer()
+        .then(result => {
+            switch (out) {
+                case OUT_BASE64:
+                    res.setHeader('Content-Type', IMG_CONTENT_TYPE);
+                    res.send(result);
+                    break;
+                default:
+                    res.send(result.toString("Base64"));
+                    break;
+            }
+        })
 }
 
-export default {
+module.exports = {
     render(req, res) {
         const param = req.body;
         const {
@@ -35,58 +44,38 @@ export default {
             option,
             json = false,
             out = OUT_BYTE,
-            timeout
+            timeout = APP_CONTENT.vmManager.evalTimeout
         } = param;
         if (!option || !option.trim()) {
-            res.status(400).send("option不能为空");
+            res.status(400).send("option can not be empty");
             return;
         }
-        const canvas = createCanvas(width, height)
+        // todo:暂时去掉vm执行环境， 后续解决了vm基础功能初始化后再补回来,下同
+        let chart = echarts.init(null, null, {
+            renderer: "svg",
+            ssr: true,
+            width: width,
+            height: height
+        });
         if (json) {
             try {
-                let chart = echarts.init(canvas)
                 let optionJson = JSON.parse(option);
                 chart.setOption(optionJson);
-                output(res, out, canvas);
+                output(res, out, chart);
                 return;
             } catch (e) {
-                console.debug(`尝试解析为json出错：${option}`, e)
+                console.debug(`try parse option to json failed：${option}`, e)
             }
         }
-        const script = `
-        render(${option})
-                `;
-        const canvasRef = APP_CONTENT.vmManager.reference(canvas);
-        // let chart = echarts.init(canvas);
-        // __chart__.setOption(${option});
-        APP_CONTENT.vmManager.evalWithDefaultVm({
-                script,
-                timeout
-            },
-            (context, vmInfo) => {
-                // if (!vmInfo.echarts) {
-                //     throw "echarts 模块未初始化";
-                // }
-                // vmInfo.echarts.instantiateSync(context,
-                //     (specifier, referrer) => vmInfo.vm.compileModuleSync(echarts.toString()));
-                const global = context.global;
-                // global.setSync("__echarts__", vmInfo.echarts.evaluateSync());
-                // global.setSync("__canvas__", canvasRef);
-                global.setSync("render", (option) => {
-                    // let chart = echarts.init(canvas);
-                    // chart.setOption(option);
-                });
-            },
-            () => {
-                output(res, out, canvas);
-            },
-            err => {
-                console.error("执行脚本报错：", err);
-                res.status(400).send(`执行代码处出错${err.message}`);
-            },
-            err => {
-                console.error("无法创建执行脚本上下文环境：", err);
-                res.status(500).send("无法创建环境");
-            })
-    },
+        try {
+            // todo: vm is not security, but isolated-vm context is not complete, need have a isolated-vm solution
+            vm.runInNewContext(`
+        const option = ${option};
+        chart.setOption(option);`, {chart})
+            output(res, out, chart);
+        } catch (e) {
+            console.error('render echarts faile', e);
+            res.status(400).send(`render echarts failed ${e.message}`);
+        }
+    }
 }

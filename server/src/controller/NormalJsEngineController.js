@@ -1,6 +1,6 @@
-import {APP_CONTENT} from "../constant/ConstVar.js";
+const {APP_CONTENT} = require('../constant/ConstVar.js');
 
-export default {
+module.exports = {
     eval(req, res) {
         const param = req.body;
         APP_CONTENT.vmManager.evalWithDefaultVm(param, null,
@@ -15,5 +15,5 @@ export default {
                             console.error("无法创建执行脚本上下文环境：", err);
                             res.status(500).send("无法创建环境");
                         })
-    },
+    }
 }

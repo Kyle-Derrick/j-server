@@ -6,4 +6,4 @@ class AppOption {
     }
 }
 
-export default AppOption;
+module.exports = AppOption;

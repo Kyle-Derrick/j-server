@@ -1,11 +1,11 @@
-import yml from "yamljs";
-import fs from "fs";
-import express from "express";
-import expressWs from "express-ws";
-import {APP_CONTENT, DEFAULT_CONFIG_PATH} from "./constant/ConstVar.js";
-import AppConfig from "./model/AppConfig.js";
-import requestMapping from "./controller/requestMapping.js"
-import VmManager from "./support/vm/VmManager.js";
+const yml = require('yamljs');
+const fs = require('fs');
+const express = require('express');
+const expressWs = require('express-ws');
+const {APP_CONTENT, DEFAULT_CONFIG_PATH} = require('./constant/ConstVar.js');
+const AppConfig = require('./model/AppConfig.js');
+const requestMapping = require("./controller/requestMapping.js");
+const VmManager = require('./support/vm/VmManager.js');
 
 const SUFFIX = "Controller";
 
@@ -75,4 +75,4 @@ class AppServer {
     }
 }
 
-export default AppServer;
+module.exports = AppServer;

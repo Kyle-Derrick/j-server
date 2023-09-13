@@ -1,5 +1,5 @@
-import * as ConstVar from "../constant/ConstVar.js";
-import {DEFAULT_RECOVERY_FREE_MAX_TIME, DEFAULT_WAIT_CHECK_CYCLE} from "../constant/ConstVar.js";
+const ConstVar = require("../constant/ConstVar.js");
+// const {DEFAULT_RECOVERY_FREE_MAX_TIME, DEFAULT_WAIT_CHECK_CYCLE} = require('../constant/ConstVar.js');
 
 class AppConfig {
     host = ConstVar.DEFAULT_HOST;
@@ -37,4 +37,4 @@ class AppConfig {
     }
 }
 
-export default AppConfig;
+module.exports = AppConfig;

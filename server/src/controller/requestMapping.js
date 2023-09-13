@@ -1,6 +1,6 @@
-import normal from "./NormalJsEngineController.js";
-import echarts from "./EchartsRenderController.js";
-export default {
+const normal = require('./NormalJsEngineController.js');
+const echarts = require('./EchartsRenderController.js');
+module.exports = {
     normal,
     echarts,
 }
