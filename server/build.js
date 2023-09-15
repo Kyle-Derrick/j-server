@@ -58,15 +58,18 @@ if (fs.existsSync(nodeFilePath)) {
 }
 function pkg() {
     if (!fs.existsSync(path.join(buildDir, nodeBaseFilename))) {
+        console.log('extract the node package...');
         if (isWin) {
-            child_process.execSync(`python ziputil.py -u ${nodeFilePath} ${buildDir}`)
+            child_process.execSync(`python ziputil.py -u ${nodeFilePath} ${buildDir}`, {stdio: 'inherit'})
             process.env.PATH = `${path.join(__dirname, buildDir, nodeBaseFilename)};${process.env.PATH}`;
         } else {
-            child_process.execSync(`tar xvf ${nodeFilePath} ${buildDir}`)
+            child_process.execSync(`tar xvf ${nodeFilePath} -C ${buildDir}`, {stdio: 'inherit'})
             process.env.PATH = `${path.join(__dirname, buildDir, nodeBaseFilename, 'bin')}:${process.env.PATH}`;
         }
-        child_process.execSync('npm install -g pm2');
+        console.log('node init...');
+        child_process.execSync('npm install -g pm2', {stdio: 'inherit'});
     }
+    console.log('pkg...');
     const zipArgs = [];
     const innerPath = path.join(config.projectName, config.innerPath);
     zipArgs.push(`:${config.projectName}:${path.join(buildDir, nodeBaseFilename)}`);
@@ -80,5 +83,7 @@ function pkg() {
     zipArgs.push(`:${path.join(innerPath, 'App.js')}:App.js`);
     zipArgs.push(`:${path.join(innerPath, 'package.json')}:package.json`);
     zipArgs.push(`:${path.join(innerPath, 'package-lock.json')}:package-lock.json`);
-    child_process.execSync(`python ziputil.py ${zipArgs.join(' ')} ${path.join(buildDir, config.projectName + '.zip')}`)
+    child_process.execSync(`python ziputil.py ${zipArgs.join(' ')} ${path.join(buildDir, config.projectName + '.zip')}`, {stdio: 'inherit'})
+
+    console.log('pkg finished.');
 }

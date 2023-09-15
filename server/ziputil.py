@@ -30,7 +30,6 @@ def zip(sources, destination):
                     for file in files:
                         file_path = os.path.join(root, file)
                         zf.write(file_path, os.path.join(entry_path, os.path.relpath(file_path, source)))
-                        print(f'compressed file:{file_path}')
             else:
                 # 如果源路径不存在，抛出异常
                 raise FileNotFoundError(f'{source} does not exist')

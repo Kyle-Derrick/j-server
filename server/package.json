@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "node build.js",
-    "run": "node App.js"
+    "app": "node App.js"
   },
   "keywords": [],
   "author": "",
