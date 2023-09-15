@@ -2,16 +2,16 @@ function handleBase(vmInstance, context) {
     const jail = context.global;
     jail.setSync("global", jail.derefInto());
     jail.setSync("log", (...args) => {
-        console.log('vm out: ', ...args);
+        console.log('vm out <log>: ', ...args);
     });
     jail.setSync("error", (...args) => {
-        console.error('vm out: ', ...args);
+        console.error('vm out <error>: ', ...args);
     });
     jail.setSync("warn", (...args) => {
-        console.warn('vm out: ', ...args);
+        console.warn('vm out <warn>: ', ...args);
     });
     jail.setSync("debug", (...args) => {
-        console.debug('vm out: ', ...args);
+        console.debug('vm out <debug>: ', ...args);
     });
     context.evalSync(`(${
         () => {

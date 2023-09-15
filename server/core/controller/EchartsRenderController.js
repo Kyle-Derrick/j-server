@@ -21,8 +21,8 @@ function output(res, out, chart) {
         .then(result => {
             switch (out) {
                 case OUT_BASE64:
-                    res.setHeader('Content-Type', IMG_CONTENT_TYPE);
-                    res.send(result);
+                    res.setHeader('Content-Type', IMG_CONTENT_TYPE)
+                        .send(result);
                     break;
                 default:
                     res.send(result.toString("Base64"));
@@ -67,7 +67,8 @@ module.exports = {
                 if (out === OUT_BASE64) {
                     res.send(image.toString('base64'));
                 } else {
-                    res.send(image);
+                    res.setHeader('Content-Type', IMG_CONTENT_TYPE)
+                        .send(image);
                 }
             },
             (msg, code) => {

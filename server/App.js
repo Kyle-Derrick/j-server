@@ -1,5 +1,5 @@
 const {program} = require('commander');
-const AppServer = require('./AppServer.js');
+const AppServer = require('./core/AppServer.js');
 
 program.version('1.0.0');
 program.option('-c, --config <path>', 'config file path set');
