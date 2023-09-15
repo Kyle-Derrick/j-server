@@ -6,7 +6,7 @@ project_path=$(cd ..;pwd)
 export PATH=$current_path:$PATH
 
 project_name=js-engine
-inner_path=resources/app
+inner_path=resources
 
 function start() {
   log_path=$project_path/log
@@ -16,7 +16,9 @@ function start() {
 }
 
 if [ "$1" == "stop" ]; then
-    pm2 stop $inner_path
+    pm2 stop $project_name
+elif [ "$1" == "status" ]; then
+    pm2 status $project_name
 else
     start
 fi

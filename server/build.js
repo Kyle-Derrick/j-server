@@ -8,7 +8,7 @@ const path = require("path");
 const config = {
     nodeDownload: `https://nodejs.org/download/release/${process.version}/`,
     projectName: 'js-engine',
-    innerPath: path.join('resources', 'app')
+    innerPath: 'resources'
 }
 let platform = os.platform();
 const arch = os.arch();

@@ -4,7 +4,10 @@
   "description": "",
   "main": "App.js",
   "type": "commonjs",
-  "scripts": {},
+  "scripts": {
+    "build": "node build.js",
+    "run": "node App.js"
+  },
   "keywords": [],
   "author": "",
   "license": "Apache-2.0 license",
