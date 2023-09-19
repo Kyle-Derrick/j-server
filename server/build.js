@@ -103,6 +103,7 @@ function pkg() {
     zipArgs.push(`:${path.join(innerPath, 'package.json')}:package.json`);
     zipArgs.push(`:${path.join(innerPath, 'package-lock.json')}:package-lock.json`);
     // zipArgs.push(`:${path.join(innerPath, 'LICENSE')}:LICENSE`);
+    const pkgName = `${config.projectName}-${package_config.version}.zip`;
     child_process.execSync(`python ziputil.py ${zipArgs.join(' ')} ${path.join(buildDir, config.projectName + '.zip')}`, {stdio: 'inherit'})
 
     console.log('pkg finished.');
