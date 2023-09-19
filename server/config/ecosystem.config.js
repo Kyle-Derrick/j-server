@@ -10,7 +10,7 @@ module.exports = {
     name: 'js-engine',
     script: 'App.js',
     cwd: app_path,
-    instances: 1,
+    instances: 0,
     error_file,
     out_file,
     log_date_format:"YYYY-MM-DD HH:mm Z",
