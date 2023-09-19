@@ -7,7 +7,7 @@ const out_file=path.join(log_path, 'out.log');
 const error_file=path.join(log_path, 'error.log');
 module.exports = {
   apps : [{
-    name: 'js-engine',
+    name: 'j-server',
     script: 'App.js',
     cwd: app_path,
     instances: 0,

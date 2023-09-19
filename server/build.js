@@ -8,7 +8,7 @@ const package_config = require("./package.json");
 
 const config = {
     nodeDownload: `https://nodejs.org/download/release/${process.version}/`,
-    projectName: 'js-engine',
+    projectName: 'j-server',
     innerPath: 'resources',
     allowNpmEnv: new Set([
         // 'tmp', 'temp', 'os', 'username', 'hostname', 'home', 'homepath', 'lang', 'term', 'shell', 'pwd', 'oldpwd', 'user',

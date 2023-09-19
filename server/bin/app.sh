@@ -5,7 +5,7 @@ project_path=$(cd $current_path;cd ..;pwd)
 
 export PATH=$current_path:$PATH
 
-project_name=js-engine
+project_name=j-server
 inner_path=resources
 
 config_path=$project_path/config/ecosystem.config.js
