@@ -58,6 +58,7 @@ chmod +x bin/*
 /bin/cp -rf config build/$project_name/
 /bin/cp -rf core $resources_path
 /bin/cp -f App.js $resources_path
+/bin/cp -f LICENSE $resources_path
 /bin/cp -f package.json $resources_path
 /bin/cp -f package-lock.json $resources_path 2>/dev/null
 echo "copy over"

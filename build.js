@@ -100,6 +100,7 @@ function pkg() {
     zipArgs.push(`:${config.projectName}:bin`);
     zipArgs.push(`:${path.join(config.projectName, 'config')}:config`);
     zipArgs.push(`:${path.join(innerPath, 'App.js')}:App.js`);
+    zipArgs.push(`:${path.join(innerPath, 'LICENSE')}:LICENSE`);
     zipArgs.push(`:${path.join(innerPath, 'package.json')}:package.json`);
     zipArgs.push(`:${path.join(innerPath, 'package-lock.json')}:package-lock.json`);
     // zipArgs.push(`:${path.join(innerPath, 'LICENSE')}:LICENSE`);
