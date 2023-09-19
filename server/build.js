@@ -39,15 +39,15 @@ for (const envKey in process.env) {
     env[envKey] = process.env[envKey];
 }
 
+const nodeFilePath = path.join(buildDir, nodeFilename);
 if (isWin) {
     pkgWin();
 } else {
     child_process.execSync(`bash build.sh ${package_config.name} ${nodeFilename} ${package_config.version} ${downUrl}`, {stdio: 'inherit', env});
     return;
-}
 
+}
 function pkgWin() {
-    const nodeFilePath = path.join(buildDir, nodeFilename);
     if (fs.existsSync(nodeFilePath)) {
         console.log('already download node');
         pkg();
@@ -85,10 +85,8 @@ function pkg() {
     if (!fs.existsSync(path.join(buildDir, nodeBaseFilename))) {
         console.log('extract the node package...');
         let env_path;
-        if (isWin) {
-            child_process.execSync(`python ziputil.py -u ${nodeFilePath} ${buildDir}`, {stdio: 'inherit'})
-            env_path = `${path.join(__dirname, buildDir, nodeBaseFilename)};${process.env.PATH}`;
-        }
+        child_process.execSync(`python ziputil.py -u ${nodeFilePath} ${buildDir}`, {stdio: 'inherit'})
+        env_path = `${path.join(__dirname, buildDir, nodeBaseFilename)};${process.env.PATH}`;
         env.PATH = env_path;
         console.log('node init...');
         child_process.execSync('npm install -g pm2', {stdio: 'inherit', env});
@@ -99,11 +97,8 @@ function pkg() {
     zipArgs.push(`:${config.projectName}:${path.join(buildDir, nodeBaseFilename)}`);
     zipArgs.push(`:${path.join(innerPath, 'node_modules')}:node_modules`);
     zipArgs.push(`:${path.join(innerPath, 'core')}:core`);
-    if (isWin) {
-        zipArgs.push(`:${config.projectName}:bin`);
-    } else {
-        zipArgs.push(`:${path.join(config.projectName, 'bin')}:bin`);
-    }
+    zipArgs.push(`:${config.projectName}:bin`);
+    zipArgs.push(`:${path.join(config.projectName, 'config')}:config`);
     zipArgs.push(`:${path.join(innerPath, 'App.js')}:App.js`);
     zipArgs.push(`:${path.join(innerPath, 'package.json')}:package.json`);
     zipArgs.push(`:${path.join(innerPath, 'package-lock.json')}:package-lock.json`);

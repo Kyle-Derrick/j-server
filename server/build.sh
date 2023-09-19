@@ -54,7 +54,8 @@ rm -rf $resources_path
 mkdir -p $resources_path
 chmod +x bin/*
 /bin/cp -f bin/* build/$project_name/bin/
-/bin/cp -rf node_modules $resources_path
+/bin/cp -rf core $resources_path
+/bin/cp -rf config build/$project_name/
 /bin/cp -rf core $resources_path
 /bin/cp -f App.js $resources_path
 /bin/cp -f package.json $resources_path

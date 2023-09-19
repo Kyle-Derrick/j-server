@@ -7,17 +7,8 @@ set project_name=js-engine
 set inner_path=resources
 
 set command=%1
+set config_path=%project_path%\config\ecosystem.config.js
 
-if "%command%"=="stop" ( pm2 stop %project_name% )^
-else if "%command%"=="status" (pm2 status %project_name%)^
-else ( GOTO start )
-
-exit
-:start
-set log_path=%project_path%log
-mkdir %log_path% 2>nul
-echo %log_path%
-
-pm2 start %project_path%\%inner_path%\App.js -i max -n %project_name% -o %log_path%\out.log -e %log_path%\err.log
-
-pause
+if "%command%"=="stop" ( pm2 stop %config_path% )^
+else if "%command%"=="status" (pm2 status %config_path%)^
+else ( pm2 start %config_path% )
