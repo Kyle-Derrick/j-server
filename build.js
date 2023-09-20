@@ -43,7 +43,8 @@ const nodeFilePath = path.join(buildDir, nodeFilename);
 if (isWin) {
     pkgWin();
 } else {
-    child_process.execSync(`bash build.sh ${package_config.name} ${nodeFilename} ${package_config.version} ${downUrl}`, {stdio: 'inherit', env});
+    const suffix = `${platform}-${arch}-${package_config.version}`;
+    child_process.execSync(`bash build.sh ${package_config.name} ${nodeFilename} ${suffix} ${downUrl}`, {stdio: 'inherit', env});
     return;
 
 }
@@ -104,8 +105,8 @@ function pkg() {
     zipArgs.push(`:${path.join(innerPath, 'package.json')}:package.json`);
     zipArgs.push(`:${path.join(innerPath, 'package-lock.json')}:package-lock.json`);
     // zipArgs.push(`:${path.join(innerPath, 'LICENSE')}:LICENSE`);
-    const pkgName = `${config.projectName}-${package_config.version}.zip`;
-    child_process.execSync(`python ziputil.py ${zipArgs.join(' ')} ${path.join(buildDir, config.projectName + '.zip')}`, {stdio: 'inherit'})
+    const pkgName = `${config.projectName}-${platform}-${arch}-${package_config.version}.zip`;
+    child_process.execSync(`python ziputil.py ${zipArgs.join(' ')} ${path.join(buildDir, pkgName)}`, {stdio: 'inherit'})
 
     console.log('pkg finished.');
 }

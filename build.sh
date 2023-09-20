@@ -1,7 +1,7 @@
 #!/bin/bash
 project_name=$1
 node_file=$2
-version=$3
+suffix=$3
 download_url=$4
 
 function download_node() {
@@ -64,5 +64,5 @@ chmod +x bin/*
 echo "copy over"
 
 echo "pkg project..."
-tar -Jcf build/${project_name}-${version}.tar.xz -C build/ $project_name
+tar -Jcf build/${project_name}-${suffix}.tar.xz -C build/ $project_name
 echo "> pkg finished!"
