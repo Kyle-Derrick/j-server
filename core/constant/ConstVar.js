@@ -16,7 +16,7 @@ const DEFAULT_WAIT_CHECK_CYCLE = 1;
 const DEFAULT_RECOVERY_FREE_MAX_TIME = 60;
 const DEFAULT_FORCED_RECYCLING_TIME = 60 * 3;
 const DEFAULT_EVAL_TIMEOUT = 3 * 60;
-const DEFAULT_CONFIG_PATH = join(dirname(__dirname), "config/application.yml").toString();
+const DEFAULT_CONFIG_PATH = join(dirname(dirname(__dirname)), "config/application.yml").toString();
 const DEFAULT_INCLUDE_MODULE = {
     echarts: "import * as echarts from 'echarts';"
 };

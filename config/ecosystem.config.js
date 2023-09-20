@@ -1,10 +1,12 @@
-const resources_path = 'resources';
 const path = require('path')
+const fs = require("fs");
 const root_path=path.dirname(__dirname);
-const app_path=path.join(root_path, resources_path);
+const app_path=path.join(root_path, 'resources');
 const log_path=path.join(root_path, 'logs');
 const out_file=path.join(log_path, 'out.log');
 const error_file=path.join(log_path, 'error.log');
+const app_config_path=path.join(root_path, 'config', 'application.yml');
+fs.mkdirSync(log_path, {recursive: true});
 module.exports = {
   apps : [{
     name: 'j-server',
@@ -14,6 +16,8 @@ module.exports = {
     error_file,
     out_file,
     log_date_format:"YYYY-MM-DD HH:mm Z",
+
+    args: `-c ${app_config_path}`,
     // watch: '.'
   }],
 

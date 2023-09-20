@@ -28,17 +28,11 @@ class AppServer {
             if (option && option.config) {
                 configPath = option.config;
             }
-            fs.access(configPath, fs.constants.F_OK, err => {
-                if (err) {
-                    // 如果出错，说明文件不存在
-                    console.warn(`config yaml file not exists: ${configPath}`);
-                } else {
-                    ymlConfig = yml.load(configPath);
-                    Object.assign(config, ymlConfig);
-                }
-            })
+            fs.accessSync(configPath, fs.constants.R_OK);
+            ymlConfig = yml.load(configPath);
+            Object.assign(config, ymlConfig);
         } catch (e) {
-            console.error(`parse app config error: ${configPath}`)
+            console.error(`parse app config error: ${configPath}, err: ${e.message}`)
             throw e;
         }
         config.init();
@@ -55,7 +49,7 @@ class AppServer {
         this.app = app;
         this.setRequestMapping();
         const server = app.listen(this.config.port, this.config.host, function () {
-            console.log("服务已启动，地址为http://%s:%s", server.address().address, server.address().port)
+            console.log("server started: http://%s:%s", server.address().address, server.address().port)
         });
         this.server = server;
     }

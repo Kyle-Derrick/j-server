@@ -9,7 +9,7 @@ project_name=j-server
 inner_path=resources
 
 config_path=$project_path/config/ecosystem.config.js
-if [ $# -gt 1 ]; then
+if [ $# -gt 0 ]; then
 option=$1
 else
 option=start
