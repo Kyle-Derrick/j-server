@@ -15,4 +15,4 @@ else
 option=start
 fi
 
-pm2 $1 $config_path
+pm2 $option $config_path
